@@ -5,6 +5,8 @@ import navigation_pane as np
 import AdminProfileEdit as ape
 import UserSearchedKeywords as usk
 import NewAdmin
+import ThemePanel as tp
+import Block_Window as bw
 
 from tkinter import messagebox
 
@@ -12,37 +14,47 @@ class AdminNavigationPanel:
 
     def __init__(self, admin_id):
 
+        self.ad_id=admin_id
         self.panel=Tk()
-
-        self.w = int(self.panel.winfo_screenwidth()*0.6)
+        self.w = int(self.panel.winfo_screenwidth()*0.7)
         self.h = int(self.panel.winfo_screenheight()*0.6)
+        self.d=self.yp(100/6)
+        self.cy=int(0.5*self.d)
+        self.cx=int(0.5*self.w)
 
         self.panel.geometry('{}x{}'.format(self.w, self.h))
         self.panel.title("Admin Options Page")
         self.panel.resizable(height=False,width=False)
 
-        self.canvas = Canvas(self.panel, height=self.h, width=self.w)
-        self.canvas.place(x=0,y=0)
-        
-        self.bckg=ImageTk.PhotoImage(file="upanelbckg.jpg")
-        self.canvas.create_image(0, 0, anchor='nw', image=self.bckg)
+        self.canvas1=Canvas(self.panel, height=self.d, width=self.w, bg="#12131F")
+        self.canvas1.place(x=0, y=0)
+        self.canvas1.create_text(self.cx, self.cy, text="Edit Profile", fill="#C3C3C3", font=("Candara", self.yp(10)), anchor="center")
+        self.canvas1.bind("<Button-1>", self.edit)
 
-        self.ad_id=admin_id
+        self.canvas2=Canvas(self.panel, height=self.d, width=self.w, bg="#12131F")
+        self.canvas2.place(x=0, y=self.yp(100/6))
+        self.canvas2.create_text(self.cx, self.cy, text="Add an Admin", fill="#C3C3C3", font=("Candara", self.yp(10)), anchor="center")
+        self.canvas2.bind("<Button-1>", self.new_admin)
 
-        self.change_admin_settings=Button(self.canvas, text="Edit Profile", command=self.edit, anchor="center")
-        self.change_admin_settings.place(x=self.xp(50), y=self.yp(10))
+        self.canvas3=Canvas(self.panel, height=self.d, width=self.w, bg="#12131F")
+        self.canvas3.place(x=0, y=self.yp(200/6))
+        self.canvas3.create_text(self.cx, self.cy, text="Add an Application", fill="#C3C3C3", font=("Candara", self.yp(10)), anchor="center")
+        self.canvas3.bind("<Button-1>", self.new_app)
 
-        self.add_admin=Button(self.canvas, text="Add an Admin", command=self.new_admin, anchor="center")
-        self.add_admin.place(x=self.xp(50), y=self.yp(30))
+        self.canvas4=Canvas(self.panel, height=self.d, width=self.w, bg="#12131F")
+        self.canvas4.place(x=0, y=self.yp(300/6))
+        self.canvas4.create_text(self.cx, self.cy, text="See Unfound Searched Keywords", fill="#C3C3C3", font=("Candara", self.yp(10)), anchor="center")
+        self.canvas4.bind("<Button-1>", self.search)
 
-        self.add_app=Button(self.canvas, text="Add an Application", command=self.new_app, anchor="center")
-        self.add_app.place(x=self.xp(50), y=self.yp(50))
+        self.canvas5=Canvas(self.panel, height=self.d, width=self.w, bg="#12131F")
+        self.canvas5.place(x=0, y=self.yp(400/6))
+        self.canvas5.create_text(self.cx, self.cy, text="Block/Unblock User", fill="#C3C3C3", font=("Candara", self.yp(10)), anchor="center")
+        self.canvas5.bind("<Button-1>", self.block)
 
-        self.see_searches=Button(self.canvas, text="See Unfound Searche Keywords", command=self.search, anchor="center")
-        self.see_searches.place(x=self.xp(50), y=self.yp(70))
-
-        self.block_btn=Button(self.canvas, text="Block a Malicious User", command=self.block, anchor="center")
-        self.block_btn.place(x=self.xp(50), y=self.yp(70))
+        self.canvas6=Canvas(self.panel, height=self.d, width=self.w, bg="#12131F")
+        self.canvas6.place(x=0, y=self.yp(500/6))
+        self.canvas6.create_text(self.cx, self.cy, text="Add a Weather Theme", fill="#C3C3C3", font=("Candara", self.yp(10)), anchor="center")
+        self.canvas6.bind("<Button-1>", self.theme)
         
         self.panel.mainloop()
 
@@ -68,8 +80,9 @@ class AdminNavigationPanel:
         d=usk.SearchedKeywords()
 
     def block(self):
-        pass
+        self.panel.destroy()
+        d=bw.BlockUser(self.ad_id)
         
-
-if __name__=="__main__":
-    d = AdminNavigationPanel(1)
+    def theme(self):
+        self.panel.destroy()
+        d=tp.AddTheme(self.ad_id)

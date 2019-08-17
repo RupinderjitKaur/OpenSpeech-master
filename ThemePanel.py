@@ -10,7 +10,7 @@ class AddTheme:
 
     def __init__(self, admin_id):
 
-        self.panel=Tk()
+        self.panel=Toplevel()
         self.ad_id=admin_id
         self.w = int(self.panel.winfo_screenwidth())
         self.h = int(self.panel.winfo_screenheight())
@@ -28,34 +28,36 @@ class AddTheme:
 
         self.canvas.create_text(self.xp(50), self.yp(7), text="Add Theme Parameters" ,fill="#3B496F", font=('Candara', self.yp(6), "bold"), anchor='center')
 
-        self.canvas.create_text(self.xp(10), self.yp(17), text="Weather" ,fill="#23304E", font=('Candara', self.yp(4.5), "bold"), anchor='nw')
+        self.canvas.create_text(self.xp(10), self.yp(16), text="Weather" ,fill="#23304E", font=('Candara', self.yp(4.5), "bold"), anchor='nw')
         self.weather=StringVar(self.canvas)
         self.weather_field=Entry(self.canvas, bg="#FFFFFF", fg="#384E7E", font=("Candara", self.yp(2.5)), textvariable=self.weather)
-        self.weather_field.place(x=self.xp(40), y=self.yp(18))
+        self.weather_field.place(x=self.xp(40), y=self.yp(17))
         
         self.canvas.create_text(self.xp(10), self.yp(23), text="Background Image" ,fill="#23304E", font=('Candara', self.yp(4.5), "bold"), anchor='nw')
         self.bckg=StringVar(self.canvas)
         self.bckg_btn=Button(self.canvas, text="Select Background Picture", fg="#384E7E", command=self.insert_bckg, font=('Candara', self.yp(2.5), "bold"))
         self.bckg_btn.place(x=self.xp(40), y=self.yp(23))
+
+        insert = lambda f: (lambda p: self.insert_pic(f))
         
         h=0
         for i in range(1, 8):
             
-            self.canvas.create_text(self.xp(10), self.yp(29+h), text="Canvas"+str(i)+" Image" ,fill="#23304E", font=('Candara', self.yp(4.5), "bold"), anchor='nw') 
+            self.canvas.create_text(self.xp(10), self.yp(30+h), text="Canvas"+str(i)+" Image" ,fill="#23304E", font=('Candara', self.yp(4.5), "bold"), anchor='nw') 
             globals()["c"+str(i)]=StringVar(self.canvas)
-            globals()["c"+str(i)+"_btn"]=Button(self.canvas, text="Select Picture", fg="#384E7E", command=lambda : self.insert_pic(i), font=('Candara', self.yp(2.5), "bold"))
-            globals()["c"+str(i)+"_btn"].place(x=self.xp(40), y=self.yp(29+h))
-            h=h+6
+            globals()["c"+str(i)+"_btn"]=Button(self.canvas, text="Select Picture", fg="#384E7E", command=insert(i), font=('Candara', self.yp(2.5), "bold"))
+            globals()["c"+str(i)+"_btn"].place(x=self.xp(40), y=self.yp(30+h))
+            h=h+7
 
-        self.canvas.create_text(self.xp(10), self.yp(71), text="Font Colour" ,fill="#23304E", font=('Candara', self.yp(4.5), "bold"), anchor='nw')  
+        self.canvas.create_text(self.xp(10), self.yp(79), text="Font Colour" ,fill="#23304E", font=('Candara', self.yp(4.5), "bold"), anchor='nw')  
         self.font=StringVar(self.canvas)
         self.font_field=Entry(self.panel, bg="#FFFFFF", fg="#384E7E", font=("Candara", self.yp(2.5)), textvariable=self.font)
-        self.font_field.place(x=self.xp(40), y=self.yp(72))
+        self.font_field.place(x=self.xp(40), y=self.yp(80))
 
         img = Image.open("E:\\OpenSpeech-master\\submit.png")
         img = img.resize((self.xp(20), self.yp(6)), Image.ANTIALIAS)
         self.submit_btn=Button(self.canvas, text="Submit", command=self.submit)#'''image=ImageTk.PhotoImage(img),'''
-        self.submit_btn.place(x=self.xp(40), y=self.yp(80))
+        self.submit_btn.place(x=self.xp(40), y=self.yp(86))
         
         self.panel.mainloop()
 

@@ -22,7 +22,7 @@ class WeatherPanel:
         self.city = city
         self.get_info()
         
-        self.window = Tk()
+        self.window = Toplevel()
         self.a = self.window.winfo_screenwidth()
         self.b = self.window.winfo_screenheight()
         self.window.geometry('{}x{}'.format(self.b, self.a))
@@ -30,7 +30,7 @@ class WeatherPanel:
         self.window.resizable(height=False, width=False)
         self.window.state('zoomed')
         self.window.config(bg="black")
-
+        self.t_unit = 0
         self.window.mainloop()
 
     def get_info(self):
@@ -113,25 +113,27 @@ class WeatherPanel:
         
         img = Image.open(self.theme[0])
         img = img.resize((self.a, self.b), Image.ANTIALIAS)
-        self.panel.create_image(0, 0, anchor='nw', image=ImageTk.PhotoImage(img))
+        self.bckg=ImageTk.PhotoImage(img)
+        self.panel.create_image(0, 0, anchor='nw', image=self.bckg)
         
-        self.t_unit = 0
-        self.fggh = self.panel.create_text(self.xp(2), self.yp(4.2), text=data[0], fill=self.theme[8], font=("Arial", self.yp(7)), anchor='nw')
-        self.panel.create_text(self.xp(2), self.yp(15), text=data[1], fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
-        self.panel.create_text(self.xp(2), self.yp(21.5), text=data[2], fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
-        self.panel.create_image(self.xp(2), self.yp(25), image=data[3], anchor='nw')
-        self.panel.create_text(self.xp(12), self.yp(28), text=data[4][self.t_unit], fill=self.theme[8], font=("Arial", self.yp(6)), anchor='nw')
+        self.panel.create_text(self.xp(2), self.yp(4.2), text=data[0], fill=self.theme[8], font=("Arial", self.yp(7)), anchor='nw')
+        self.day = self.panel.create_text(self.xp(2), self.yp(15), text=data[1], fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
+        self.weather_text = self.panel.create_text(self.xp(2), self.yp(21.5), text=data[2], fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
+        self.weather_pic = self.panel.create_image(self.xp(2), self.yp(25), image=data[3], anchor='nw')
+        self.temperature = self.panel.create_text(self.xp(12), self.yp(28), text=data[4][self.t_unit], fill=self.theme[8], font=("Arial", self.yp(6)), anchor='nw')
         
         if data[5] is not None:
-            self.panel.create_text(self.xp(2.5), self.yp(40), text="Feels like " + str(data[5][self.t_unit]), fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
+            self.feels_like_temp = self.panel.create_text(self.xp(2.5), self.yp(40), text="Feels like " + str(data[5][self.t_unit]), fill=self.theme[8],
+                                                          font=("Arial", self.yp(4)), anchor='nw')
 
-        self.panel.create_text(self.xp(65), self.yp(28), text="Precipitation: " + str(data[6]) + " mm", fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
-        self.panel.create_text(self.xp(65), self.yp(34), text="Humidity: " + str(data[7]) + "%", fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
-        self.panel.create_text(self.xp(65), self.yp(40), text="Wind: " + str(data[8]) + " km/h", fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
+        self.precipitation = self.panel.create_text(self.xp(65), self.yp(28), text="Precipitation: " + str(data[6]) + " mm", fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
+        self.humidity = self.panel.create_text(self.xp(65), self.yp(34), text="Humidity: " + str(data[7]) + "%", fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
+        self.wind_speed = self.panel.create_text(self.xp(65), self.yp(40), text="Wind: " + str(data[8]) + " km/h", fill=self.theme[8], font=("Arial", self.yp(4)), anchor='nw')
 
         nx = self.xp(1.5)
 
         self.icon = []
+        self.canvas_bckg=[]
         self.sunset_icon = []
         self.sunrise_icon = []
         self.day_btn = []
@@ -150,7 +152,8 @@ class WeatherPanel:
 
             img = Image.open(self.theme[1+i])
             img = img.resize((self.c, self.d), Image.ANTIALIAS)
-            globals()["canvas" + str(i)].create_image(self.cx(0), self.cy(0), anchor='nw', image=ImageTk.PhotoImage(img))
+            self.canvas_bckg.append(ImageTk.PhotoImage(img))
+            globals()["canvas" + str(i)].create_image(self.cx(0), self.cy(0), anchor='nw', image=self.canvas_bckg[i])
 
             seconds = self.w_dict["forecast"]["forecastday"][i]["date_epoch"]
             local_time = time.ctime(seconds)
@@ -255,23 +258,18 @@ class WeatherPanel:
             wind = self.w_dict["forecast"]["forecastday"][i]["day"]["maxwind_kph"]
 
             data = (day, weather, self.icon[i], temp, None, precp, hmdt, wind)
-        self.panel.itemconfig(self.fggh,data[0])
-        '''
-        self["text"] = data[0]
-        self.weather_label["text"] = data[1]
-        self.image_label["image"] = data[2]
-        self.temp_label["text"] = data[3][0]
-        
+            
+        self.panel.itemconfig(self.day, text=data[0])
+        self.panel.itemconfig(self.weather_text, text=data[1])
+        self.panel.itemconfig(self.weather_pic, image=data[2])
+        self.panel.itemconfig(self.temperature, text=data[3][0])
         if data[4] is not None:
-            self.feel_label["text"] = "Feels like " + str(data[4][self.t_unit])
+            self.panel.itemconfig(self.feels_like_temp, text="Feels like " + str(data[4][self.t_unit]))
         else:
-            self.feel_label["text"] = ""
-
-        self.precp_label["text"] = "Precipitation: " + str(data[5]) + " mm"
-        self.hmdt_label["text"] = "Humidity: " + str(data[6]) + "%"
-        self.wind_label["text"] = "Wind: " + str(data[7]) + " km/h"
-        '''
-
+            self.panel.itemconfig(self.feels_like_temp, text="")
+        self.panel.itemconfig(self.precipitation, text="Precipitation: " + str(data[5]) + " mm")
+        self.panel.itemconfig(self.humidity, text="Humidity: " + str(data[6]) + "%")
+        self.panel.itemconfig(self.wind_speed, text="Wind: " + str(data[7]) + " km/h")
 
 if __name__ == "__main__":
     u=[1]
