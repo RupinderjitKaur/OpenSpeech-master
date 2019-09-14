@@ -36,9 +36,7 @@ class AdminPanel:
         self.pass_field=Entry(self.panel, bg="#FFFFFF", fg="#384E7E", font=("Candara", self.yp(4.63)), textvariable=self.password)
         self.pass_field.place(x=self.xp(40), y=self.yp(42))
 
-        img = Image.open("E:\\OpenSpeech-master\\login.png")
-        img = img.resize((self.xp(20), self.yp(10)), Image.ANTIALIAS)
-        self.login=Button(self.canvas, text="Submit", command=self.log)#'''image=ImageTk.PhotoImage(img),'''
+        self.login=Button(self.canvas, text="Submit", command=self.log, font=("Candara", self.yp(5), 'bold'), fg="#23304E")
         self.login.place(x=self.xp(40), y=self.yp(60))
         
         self.panel.mainloop()
