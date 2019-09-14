@@ -58,7 +58,8 @@ class YPanel:
         h=self.yp(20.25)
         thmb=[]
 
-        show_videos = lambda f: (lambda p: self.openrecent(f))
+        show_videos = lambda f: (lambda p: self.openrecent(f)) # the outer lambda returns an inner lambda function that creates a function that has parameter f already filled in
+        #and when we click the  Button-1, this inner lambda returns this function, whuch is then called.
 
         for vid in recents:
 
